@@ -188,3 +188,20 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
+  const yazilar = [
+    "Yaratıcı Çözümler",
+    "Profesyonel Prodüksiyon",
+    "Markanı Öne Çıkar",
+    "Stratejik Medya Planlama"
+  ];
+  let aktifIndex = 0;
+  const yaziDiv = document.getElementById("degisenYazi");
+
+  setInterval(() => {
+    aktifIndex = (aktifIndex + 1) % yazilar.length;
+    yaziDiv.style.opacity = 0;
+    setTimeout(() => {
+      yaziDiv.textContent = yazilar[aktifIndex];
+      yaziDiv.style.opacity = 1;
+    }, 500);
+  }, 4000);
