@@ -1,4 +1,3 @@
-
 // Aktif menü linkini belirle
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.querySelectorAll('nav a');
@@ -23,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
-
+// Hover etiket ve glow
 const icon = document.querySelector('.hover-icon');
 const label = document.querySelector('.hover-label');
 let currentX = 0, currentY = 0;
@@ -49,7 +47,6 @@ document.addEventListener('mousemove', e => {
 
   icon.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
-  // Glow efekti – daha belirgin fade efekti için alpha çok daha düşecek
   const glowStrength = Math.max(0, 1 - distance / 700);
   const blurSize = 20 + glowStrength * 30;
   const glowColor = `rgba(255, 140, 0, ${glowStrength * 0.35})`;
@@ -58,7 +55,6 @@ document.addEventListener('mousemove', e => {
     ? `drop-shadow(0 0 ${blurSize}px ${glowColor})`
     : 'none';
 
-  // Etiket görünürlüğü
   const bounds = icon.getBoundingClientRect();
   if (
     e.clientX >= bounds.left &&
@@ -71,8 +67,9 @@ document.addEventListener('mousemove', e => {
     label.style.opacity = 0;
   }
 });
-const animasyonElemanlari = document.querySelectorAll('[data-animasyon="kaydir"]');
 
+// Scroll animasyonları
+const animasyonElemanlari = document.querySelectorAll('[data-animasyon="kaydir"]');
 const animasyonKontrol = () => {
   animasyonElemanlari.forEach(el => {
     const rect = el.getBoundingClientRect();
@@ -81,18 +78,17 @@ const animasyonKontrol = () => {
     }
   });
 };
-
 window.addEventListener('scroll', animasyonKontrol);
 window.addEventListener('load', animasyonKontrol);
 window.addEventListener('load', () => {
   document.querySelector('.main-header').classList.add('geldi');
 });
 
-
+// Parçacık animasyonu
 const canvas = document.getElementById('particles-bg');
 const ctx = canvas.getContext('2d');
 let particles = [];
-let hugeParticles = 0; // Şu anki büyük parçacık sayısı
+let hugeParticles = 0;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -101,15 +97,12 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Yeni parçacık oluştur
 function createParticle(now) {
   const lifeSpan = 4000 + Math.random() * 6000;
   const rareHugeChance = hugeParticles < 1
-    ? 1 // Zorunlu büyük parça varsa kesin üret
-    : (hugeParticles < 3 && Math.random() < 0.02); // Nadirlik ayarı
-
+    ? 1
+    : (hugeParticles < 3 && Math.random() < 0.02);
   const isHuge = rareHugeChance === 1;
-
   if (isHuge) hugeParticles++;
 
   const size = isHuge
@@ -133,12 +126,10 @@ function createParticle(now) {
   };
 }
 
-// Başlangıçta parçacık oluştur
 function initializeParticles(count = 40) {
   const now = performance.now();
   for (let i = 0; i < count; i++) {
-    const p = createParticle(now);
-    particles.push(p);
+    particles.push(createParticle(now));
   }
 }
 initializeParticles();
@@ -153,7 +144,6 @@ function animate() {
     const fadeIn = 1000;
     const fadeOut = 1000;
 
-    // Şeffaflık hesaplama
     if (elapsed < fadeIn) {
       p.alpha = elapsed / fadeIn;
     } else if (elapsed > p.lifeSpan - fadeOut) {
@@ -162,19 +152,16 @@ function animate() {
       p.alpha = 1;
     }
 
-    // Ömrü bittiyse yenisiyle değiştir
     if (elapsed > p.lifeSpan) {
-      if (p.huge) hugeParticles--; // büyük parçaysa azalt
+      if (p.huge) hugeParticles--;
       particles[i] = createParticle(now);
       continue;
     }
 
-    // Pozisyon güncelle
     p.angle += p.speed;
     const x = p.baseX + Math.cos(p.angle) * p.orbitRadius;
     const y = p.baseY + Math.sin(p.angle) * p.orbitRadius;
 
-    // Çizim
     ctx.beginPath();
     ctx.globalAlpha = p.alpha;
     ctx.arc(x, y, p.radius, 0, Math.PI * 2);
@@ -187,3 +174,60 @@ function animate() {
   ctx.globalAlpha = 1;
   requestAnimationFrame(animate);
 }
+animate();
+
+// Hero yazı geçişi + çizgi + harf harf animasyon
+const basliklar = [
+  { h1: "Medya ve Tanıtım Hizmetleri", p: "Profesyonel video çekimleri ve tanıtım çözümleri" },
+  { h1: "Marka Değerinizi Yükseltin", p: "Yaratıcı içeriklerle iz bırakın" },
+  { h1: "Tanıtımda Yeni Nesil Yaklaşım", p: "Stratejik medya planlama ve uygulama" },
+  { h1: "Sosyal Medya İçerikleri", p: "Kısa video, reels ve animasyon çözümleri" }
+];
+
+let aktifIndex = 0;
+const heroText = document.getElementById("degisenHero");
+const h1 = document.getElementById("heroBaslik");
+const p = document.getElementById("heroAltYazi");
+
+function yaziyiHarfHarfYaz(text) {
+  const pElement = document.getElementById("heroAltYazi");
+  pElement.innerHTML = ''; // Temizle
+
+  text.split('').forEach((char, i) => {
+    const span = document.createElement('span');
+
+    // Boşluk karakteri için görünür boşluk kullan
+    if (char === ' ') {
+      span.innerHTML = '&nbsp;';
+    } else {
+      span.textContent = char;
+    }
+
+    span.style.animation = `harfGiris 0.6s forwards`;
+    span.style.animationDelay = `${i * 30}ms`;
+    pElement.appendChild(span);
+  });
+}
+
+
+function heroYaziDegistir() {
+  heroText.classList.remove("fade-in");
+  heroText.classList.add("fade-out");
+
+  setTimeout(() => {
+    aktifIndex = (aktifIndex + 1) % basliklar.length;
+    h1.textContent = basliklar[aktifIndex].h1;
+    yaziyiHarfHarfYaz(basliklar[aktifIndex].p);
+
+    heroText.classList.remove("fade-out");
+    heroText.classList.add("fade-in");
+  }, 400);
+}
+
+setTimeout(() => {
+  heroText.classList.add("fade-in");
+  yaziyiHarfHarfYaz(basliklar[0].p);
+}, 300);
+
+setInterval(heroYaziDegistir, 5000);
+
